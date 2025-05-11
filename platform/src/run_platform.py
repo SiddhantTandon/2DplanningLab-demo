@@ -1,6 +1,7 @@
 import pygame
 from network import position_pb2
 from network import position_pb2_grpc
+from utils.agent_service import AgentService
 import grpc
 
 def main():
@@ -18,19 +19,22 @@ def main():
     running = True
 
     # setting up channel
-    channel = grpc.insecure_channel('localhost:50051')
+
+    # channel = grpc.insecure_channel('localhost:50051')
+    agent_service = AgentService(enable=True, duration=1000)
+    agent_response = agent_service.runAgentService()
 
     # service stub
-    stub = position_pb2_grpc.PositionServiceStub(channel)
+    # stub = position_pb2_grpc.PositionServiceStub(channel)
 
     # agent coord
     pos_x = 125
     pos_y = 125
-    request = position_pb2.PositionRequest(enable= True, duration = 1000)
+    # request = position_pb2.PositionRequest(enable= True, duration = 1000)
     running = True
 
 
-    for response in stub.StreamPosition(request):
+    for response in agent_response:
         print(f"received: {response.position.x , response.position.y}")
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
