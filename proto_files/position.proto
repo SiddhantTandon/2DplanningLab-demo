@@ -1,0 +1,32 @@
+
+syntax = "proto3";
+
+package position;
+
+service PositionService {
+    rpc StreamPosition (PositionRequest) returns (stream PositionResponse);
+}
+
+message PositionRequest {
+    bool enable = 1;
+    int32 duration = 2;
+}
+
+message Position{
+    double x = 1;
+    double y = 2;
+}
+
+message PositionResponse {
+    Position position = 1;
+}
+
+/**
+/home/necromancer/vcpkg/packages/protobuf_x64-linux/tools/protobuf/protoc --proto_path=. --cpp_out=. --grpc_ou
+t=. --plugin=protoc-gen-grpc=/home/necromancer/vcpkg/packages/grpc_x64-linux/tools/grpc/grpc_
+cpp_plugin position.proto
+**/
+
+/**
+python3 -m grpc_tools.protoc -I. --python_out=. --grpc_python_out=. position.proto
+**/
