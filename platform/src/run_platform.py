@@ -1,9 +1,5 @@
 import pygame
-from network import position_pb2
-from network import position_pb2_grpc
 from utils.agent_service import AgentService
-import grpc
-
 def main():
     #initialize pygame
     pygame.init()
