@@ -1,5 +1,5 @@
 import pygame
-from utils.agent_service import AgentService
+from src.agent_service import AgentService
 def main():
     #initialize pygame
     pygame.init()
