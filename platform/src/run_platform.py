@@ -1,12 +1,12 @@
 import pygame
 from src.agent_service import AgentService
 from src.map_tiling import MapTiling
+import utils.helpers as utils
 
 def main():
 
     # load map
-    with open("../maps/map_16x32_indoor.txt", "r") as f:
-        map_grid = [list(next(f).strip()) for _ in range(16)]
+    map_grid = utils.load_map_file("../maps/map_16x32_indoor.txt")
     
 
     #initialize pygame
