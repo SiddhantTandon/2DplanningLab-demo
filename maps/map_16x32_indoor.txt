@@ -1,0 +1,29 @@
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+wxxxxxxxxwxxxxxwxxxxxxwxxxxxxxxw
+wxxxxxxxxwxxxxxwxxrxxxwxxxxxxxxw
+wxxxxxxxxwxxxxxwwwxxwwwxxxxxxxxw
+wxxxxxxxxxxxxxxxxxxxxxwxxxxxxxxw
+wxxxmxxxxxxxxxxxxxxxxxxxxxnxxxxw
+wxxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
+wxxxxxxxxwxxxxxxxxxxxxwxxxxxxxxw
+wxxxxxxxxwxxxxxxxxxxxxwwwwwwwwww
+wxxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
+wxxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
+wwwxxwwwwwwwwwwddwwxxxxxxxxxxxxw
+wxxxxxxxxxxxxwxxxxxxxxxxxxxxxxxw
+wxxxxbxxxxxcxwxgxxwxxxxxxlxxxxxw
+wxxxxxxxxxwxxwxxxxwxxxxxxxxxxxxw
+wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
+
+# w = wall
+# x = free space
+# g = garage
+# b = bathroom
+# m = bedroom 1 bed
+# r = restroom
+# n = bedroom 2 bed
+# l = living room
+
+# How do we make sure that pygame will be able to cover some nodes?
+# we can scale over multiple cells, need to pick the first one that is top_left
+# And then scale to the size of the group - probably best to hard code
