@@ -24,8 +24,8 @@ class PositionServiceImpl final: public PositionService::Service{
         int duration = request->duration();
         std::random_device rd;
         std::mt19937 gen(rd());
-        std::uniform_real_distribution<> dist_x(-10.0, 10.0);  // range for x
-        std::uniform_real_distribution<> dist_y(-5.0, 5.0);    // range for y
+        std::uniform_real_distribution<> dist_x(-64.0, 64.0);  // range for x
+        std::uniform_real_distribution<> dist_y(-64.0, 64.0);    // range for y
 
         for (int i = 0; i < duration; i++){
             PositionResponse response;
