@@ -1,6 +1,7 @@
 import pygame
 from src.agent_service import AgentService
 from src.map_tiling import MapTiling
+from src.agents import RobotSprite
 import utils.helpers as utils
 
 def main():
@@ -33,14 +34,16 @@ def main():
     running = True
 
     # setting up channel
-    # agent_service = AgentService(enable=True, duration=1000)
-    # agent_response = agent_service.runAgentService()
+    agent_service = AgentService(enable=True, duration=1000)
+    agent_response = agent_service.runAgentService()
 
     # agent coord
-    pos_x = 125
-    pos_y = 125
+    pos_x = 325
+    pos_y = 325
     running = True
-    mock = True
+    mock = False
+
+    robot = RobotSprite(pos_x, pos_y, map_tile_group)
 
     if not mock:
         for response in agent_response:
@@ -52,7 +55,9 @@ def main():
 
             pos_x += response.position.x
             pos_y += response.position.y
-            dot = pygame.draw.circle(surface=display_surface, color=(0,0,0), radius=5, center=(pos_x,pos_y))
+            robot.update(pos_x, pos_y)
+            map_tile_group.draw(display_surface)
+            # dot = pygame.draw.circle(surface=display_surface, color=(0,0,0), radius=5, center=(pos_x,pos_y))
             
             pygame.display.update()
 

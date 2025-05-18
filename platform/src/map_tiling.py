@@ -10,7 +10,7 @@ class MapTiling(pygame.sprite.Sprite):
         # look up why that is
 
         if obj_str == "w":
-            image = pygame.image.load("../resources/assets/wall_10x10.png.png").convert_alpha()
+            image = pygame.image.load("../resources/assets/wall_10x10.png").convert_alpha()
             self.image = pygame.transform.scale(image, (32,32))
             object_group_tile.add(self)
         
