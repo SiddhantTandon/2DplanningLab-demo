@@ -3,11 +3,17 @@ from src.agent_service import AgentService
 from src.map_tiling import MapTiling
 from src.agents import RobotSprite
 import utils.helpers as utils
+from argparse import ArgumentParser
 
 def main():
+    parser = ArgumentParser()
+    parser.add_argument("--map", required=True, help="Give a maps file, the path should be relative to platform directory -> ../maps/map_5x5_simple.txt")
+    parser.add_argument("--just_map", help="This is a boolean flag, if used program only renders the map", action='store_true')
+    
+    args = parser.parse_args()
 
     # load map
-    map_grid = utils.load_map_file("../maps/map_16x32_indoor.txt")
+    map_grid = utils.load_map_file(str(args.map).strip())
     
 
     #initialize pygame
@@ -23,12 +29,17 @@ def main():
     # sprite groups
     map_tile_group = pygame.sprite.Group()
     wall_tile_group = pygame.sprite.Group()
+    dresser_tile_group = pygame.sprite.Group()
 
     # tiling
-    for i in range(len(map_grid[0])):
-        for j in range(len(map_grid)):
-            if map_grid[j][i] == 'w':
-                MapTiling(i*32, j*32, "w", map_tile_group, wall_tile_group)
+    for j in range(len(map_grid[0])):
+        for i in range(len(map_grid)):
+            if map_grid[i][j] == 'w':
+                MapTiling(j, i, 32, 32, "w", map_tile_group, wall_tile_group)
+            elif map_grid[i][j] == 'c':
+                pass
+                # create a DFS helper function here to find all objects
+
 
     #main loop
     running = True
@@ -41,11 +52,10 @@ def main():
     pos_x = 325
     pos_y = 325
     running = True
-    mock = False
 
     robot = RobotSprite(pos_x, pos_y, map_tile_group)
 
-    if not mock:
+    if not args.just_map:
         for response in agent_response:
             print(f"received: {response.position.x , response.position.y}")
             for event in pygame.event.get():

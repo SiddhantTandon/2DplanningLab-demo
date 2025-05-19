@@ -1,7 +1,7 @@
 import pygame
 
 class MapTiling(pygame.sprite.Sprite):
-    def __init__(self, x, y, obj_str, map_group_tile, object_group_tile):
+    def __init__(self, x, y, scale_x, scale_y, obj_str, map_group_tile, object_group_tile):
         super().__init__()
 
         # now for each different type of object we need
@@ -11,8 +11,13 @@ class MapTiling(pygame.sprite.Sprite):
 
         if obj_str == "w":
             image = pygame.image.load("../resources/assets/wall_10x10.png").convert_alpha()
-            self.image = pygame.transform.scale(image, (32,32))
+            self.image = pygame.transform.scale(image, (scale_x,scale_y))
             object_group_tile.add(self)
+        
+        # if obj_str == "c":
+        #     image = pygame.image.load("../resources/assets/dresser.png").convert_alpha()
+        #     self.image = pygame.transform.scale(image, (32,32))
+        #     object_group_tile.add(self)
         
         map_group_tile.add(self)
         
