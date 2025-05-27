@@ -1,29 +1,41 @@
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
-wxxxxxxxxwxxxxxwxxxxxxwxxxxxxxxw
-wxxxxxxxxwxxxxxwxxrxxxwxxxxxxxxw
-wxxxxxxxxwxxxxxwwwxxwwwxxxxxxxxw
-wxxxxxxxxxxxxxxxxxxxxxwxxxxxxxxw
-wxxxmxxxxxxxxxxxxxxxxxxxxxnxxxxw
-wxxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
+wxybbbrxxwkkkkkwjxxuxxwxxxxxxxrw
+wxxbbbxxxwxxxxxwxxxxxxwxxxxxnnnw
+wxxbbbxxxwxxxxxwwwxxwwwxxxxxnnnw
+wxxxxxxxxxxxxttttxxxxxwxxxxxnnnw
+wdxxxxxxxxxxxttttxxxxxxxxxxxxxyw
+wdxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
 wxxxxxxxxwxxxxxxxxxxxxwxxxxxxxxw
-wxxxxxxxxwxxxxxxxxxxxxwwwwwwwwww
+wxxxxxxxhwxxxxxxxxxxxxwwwwwwwwww
+wxxxxxxxhwxxxxxxxxxxxxxxxxxxxxxw
 wxxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
-wxxxxxxxxwxxxxxxxxxxxxxxxxxxxxxw
-wwwxxwwwwwwwwwwddwwxxxxxxxxxxxxw
-wxxxxxxxxxwxxwxxxxwxxxxxxxxxxxxw
-wxxxxbxxxxxcxwxgxxwxxxxxxlxxxxxw
-wxxxxxxxxxwxxwxxxxwxxxxxxxxxxxxw
+wwwxxwwwwwwwwwwxxwwxxxxxxxxxxxxw
+wjxxxxxuxxwxcwxxxxwllxxxxxqxxssw
+wxxxxxxxxxxxcwxppxwllxxxxxxoxssw
+wxiiiixxxxwxcwxppxwllxxxxxzxxssw
 wwwwwwwwwwwwwwwwwwwwwwwwwwwwwwww
 
 # w = wall
 # x = free space
-# g = garage
-# b = bathroom
-# m = bedroom 1 bed
-# r = restroom
-# n = bedroom 2 bed
-# l = living room
+# p = car (done)
+# b = bed (done)
+# r = side-table (done)
+# c = closet
+# d = desk
+# n = bedroom 2 bed (done)
+# l = living room console (done)
+# h = dresser
+# s = sofa (done)
+# o = coffee table (done)
+# i = tub (done)
+# j = toilet (done)
+# q = sofa chair (done)
+# z = sofa chair 2 (done)
+# k = kitchen (done)
+# t = dining table (done)
+# u = sink (done)
+# y = lamp (done)
 
 # How do we make sure that pygame will be able to cover some nodes?
 # we can scale over multiple cells, need to pick the first one that is top_left
-# And then scale to the size of the group - probably best to hard code
+# And then scale to the size by finding bottom right

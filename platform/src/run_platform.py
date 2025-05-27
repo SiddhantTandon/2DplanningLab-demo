@@ -4,6 +4,12 @@ from src.map_tiling import MapTiling
 from src.agents import RobotSprite
 import utils.helpers as utils
 from argparse import ArgumentParser
+from dataclasses import dataclass
+
+@dataclass
+class Tile:
+    height = 32
+    width = 32
 
 def main():
     parser = ArgumentParser()
@@ -29,17 +35,24 @@ def main():
     # sprite groups
     map_tile_group = pygame.sprite.Group()
     wall_tile_group = pygame.sprite.Group()
-    dresser_tile_group = pygame.sprite.Group()
+    object_tile_group = pygame.sprite.Group()
 
     # tiling
     for j in range(len(map_grid[0])):
         for i in range(len(map_grid)):
             if map_grid[i][j] == 'w':
-                MapTiling(j, i, 32, 32, "w", map_tile_group, wall_tile_group)
-            elif map_grid[i][j] == 'c':
+                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "w", map_tile_group, wall_tile_group)
+            elif map_grid[i][j] == 'j':
+                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "j", map_tile_group, object_tile_group)
+            elif map_grid[i][j] == 'q':
+                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "q", map_tile_group, object_tile_group)
+            elif map_grid[i][j] == 'o':
+                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "o", map_tile_group, object_tile_group)
+            elif map_grid[i][j] == 'u':
+                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "u", map_tile_group, object_tile_group)
+            else:
                 pass
-                # create a DFS helper function here to find all objects
-
+                
 
     #main loop
     running = True
@@ -84,6 +97,8 @@ def main():
             map_tile_group.draw(display_surface)
 
             pygame.display.update()
+            if not running:
+                break
 
     pygame.quit()
 
