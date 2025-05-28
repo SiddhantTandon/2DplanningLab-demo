@@ -18,3 +18,22 @@ def load_map_file(filepath):
             grid = [list(next(f).strip()) for _ in range(int(rowcol[0]))]
         
         return grid
+
+def is_this_topleft_point(row, col, grid, obj_str):
+    try:
+        loc = grid[row-1][col]
+    except IndexError:
+        loc = 0
+    
+    if loc != obj_str:
+        try:
+            loc = grid[row][col-1]
+        except IndexError:
+            loc = 0
+        
+        if loc == obj_str:
+            return False
+    else:
+        return False
+    
+    return True
