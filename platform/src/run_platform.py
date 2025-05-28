@@ -11,6 +11,14 @@ class Tile:
     height = 32
     width = 32
 
+OBJECT = {
+    "BED_HEIGHT": 3,
+    "BED_WIDTH": 3,
+    "CAR_HEIGHT": 3,
+    "CAR_WIDTH": 2
+}
+
+
 def main():
     parser = ArgumentParser()
     parser.add_argument("--map", required=True, help="Give a maps file, the path should be relative to platform directory -> ../maps/map_5x5_simple.txt")
@@ -41,15 +49,24 @@ def main():
     for j in range(len(map_grid[0])):
         for i in range(len(map_grid)):
             if map_grid[i][j] == 'w':
-                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "w", map_tile_group, wall_tile_group)
+                MapTiling(j*Tile.width, i*Tile.height, Tile.width, Tile.height, "w", map_tile_group, wall_tile_group)
             elif map_grid[i][j] == 'j':
-                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "j", map_tile_group, object_tile_group)
+                MapTiling(j*Tile.width, i*Tile.height, Tile.width, Tile.height, "j", map_tile_group, object_tile_group)
             elif map_grid[i][j] == 'q':
-                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "q", map_tile_group, object_tile_group)
+                MapTiling(j*Tile.width, i*Tile.height, Tile.width, Tile.height, "q", map_tile_group, object_tile_group)
             elif map_grid[i][j] == 'o':
-                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "o", map_tile_group, object_tile_group)
+                MapTiling(j*Tile.width, i*Tile.height, Tile.width, Tile.height, "o", map_tile_group, object_tile_group)
             elif map_grid[i][j] == 'u':
-                MapTiling(j*Tile.height, i*Tile.width, Tile.height, Tile.width, "u", map_tile_group, object_tile_group)
+                MapTiling(j*Tile.width, i*Tile.height, Tile.width, Tile.height, "u", map_tile_group, object_tile_group)
+            elif map_grid[i][j] == 'b':
+                if utils.is_this_topleft_point(i, j, map_grid, "b"):
+                    MapTiling(j*Tile.width, i*Tile.height, OBJECT["BED_WIDTH"]*Tile.width, OBJECT["BED_HEIGHT"]*Tile.height, "b", map_tile_group, object_tile_group)
+            elif map_grid[i][j] == 'n':
+                if utils.is_this_topleft_point(i, j, map_grid, "n"):
+                    MapTiling(j*Tile.width, i*Tile.height, OBJECT["BED_WIDTH"]*Tile.width, OBJECT["BED_HEIGHT"]*Tile.height, "n", map_tile_group, object_tile_group)
+            elif map_grid[i][j] == 'p':
+                if utils.is_this_topleft_point(i, j, map_grid, "p"):
+                    MapTiling(j*Tile.width, i*Tile.height, OBJECT["CAR_WIDTH"]*Tile.width, OBJECT["CAR_HEIGHT"]*Tile.height, "p", map_tile_group, object_tile_group)
             else:
                 pass
                 
