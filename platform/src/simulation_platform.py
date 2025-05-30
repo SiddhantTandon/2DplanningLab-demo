@@ -92,14 +92,14 @@ def main():
                 if event.type == pygame.QUIT:
                     running = False
             display_surface.fill(color=(255,255,255))
-
             pos_x += response.position.x
             pos_y += response.position.y
-            robot.update(pos_x, pos_y)
+            robot.updatePosition(pos_x, pos_y)
             map_tile_group.draw(display_surface)
-            # dot = pygame.draw.circle(surface=display_surface, color=(0,0,0), radius=5, center=(pos_x,pos_y))
-            
+            pygame.draw.rect(display_surface, (255, 0, 0), robot.rect, 2) # bounding box
             pygame.display.update()
+
+            clock.tick(FPS)
 
             if not running:
                 break

@@ -5,7 +5,7 @@ find_package(Protobuf CONFIG REQUIRED)
 find_package(gRPC CONFIG REQUIRED)
 
 add_executable(robot_server
-    src/agent.cc
+    src/robot_server.cc
     network/position.pb.cc
     network/position.grpc.pb.cc
 )

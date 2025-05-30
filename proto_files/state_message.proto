@@ -1,0 +1,25 @@
+syntax = "proto3";
+
+import  "google/protobuf/timestamp.proto";
+
+package state_message;
+
+message AgentState {
+    string agent_id = 1;
+    float x = 2;
+    float y = 3;
+    google.protobuf.Timestamp timestamp = 4;
+}
+
+message MapState {
+    google.protobuf.Timestamp timestamp = 1;
+    repeated FlatRow row = 2;
+
+    message FlatRow {
+        repeated int value = 1;
+    }
+}
+
+service ShareStateService {
+    rpc ShareState (stream AgentState) returns (stream MapState);
+}
