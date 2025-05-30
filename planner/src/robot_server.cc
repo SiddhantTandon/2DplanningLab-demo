@@ -20,7 +20,8 @@ class PositionServiceImpl final: public PositionService::Service{
     Status StreamPosition(ServerContext* context, const PositionRequest* request,
                           ServerWriter<PositionResponse>* writer) override {
         if (!request->enable()){ return Status::OK;}
-
+        
+        // dummy position settings
         int duration = request->duration();
         std::random_device rd;
         std::mt19937 gen(rd());

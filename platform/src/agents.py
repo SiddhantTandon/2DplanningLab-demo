@@ -10,5 +10,6 @@ class RobotSprite(pygame.sprite.Sprite):
         main_group_tile.add(self)
     
     def updatePosition(self, dx, dy):
+        print(f"method called: dx = {dx} and dy = {dy}")
         self.rect.x = dx
         self.rect.y = dy
