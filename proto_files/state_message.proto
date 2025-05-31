@@ -4,22 +4,50 @@ import  "google/protobuf/timestamp.proto";
 
 package state_message;
 
-message AgentState {
-    string agent_id = 1;
-    float x = 2;
-    float y = 3;
-    google.protobuf.Timestamp timestamp = 4;
+// position message
+message Position {
+    int row = 1;
+    int col = 2;
 }
 
-message MapState {
-    google.protobuf.Timestamp timestamp = 1;
-    repeated FlatRow row = 2;
+// store robot or dynamic actor state
+message AgentState {
+    string agent_id = 1;
+    Position position = 2;
+}
 
-    message FlatRow {
-        repeated int value = 1;
+// stream all agents at one timestamp
+message AgentMessage {
+    google.protobuf.Timestamp timestamp = 1;
+    repeated AgentState agents = 2;
+
+}
+
+// store 'changed' cell state
+message CellState {
+    Position position = 1;
+    string value = 2;
+}
+
+// store 'object' state
+message AgentUpdate {
+    string agent_id = 1;
+    string type = 2;
+}
+
+// oneof cell or object
+message MapState {
+    oneof parcel {
+        CellState cell_state = 1;
+        AgentUpdate agent_update = 2;
     }
 }
 
+message MapMessage {
+    google.protobuf.Timestamp timestamp = 1;
+    repeated MapState map_states = 2;
+}
+
 service ShareStateService {
-    rpc ShareState (stream AgentState) returns (stream MapState);
+    rpc ShareState (stream AgentMessage) returns (stream MapMessage);
 }
