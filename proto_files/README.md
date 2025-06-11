@@ -2,7 +2,7 @@
 
 #### Python
 ```
-python3 -m grpc_tools.protoc -I./proto --python_out=./platform/src --grpc_python_out=./platform/network state_message.proto
+python3 -m grpc_tools.protoc -I./proto --python_out=./platform/network --grpc_python_out=./platform/network state_message.proto
 ```
 
 #### C++
