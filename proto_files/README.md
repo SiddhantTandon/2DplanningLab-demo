@@ -7,5 +7,5 @@ python3 -m grpc_tools.protoc -I./proto --python_out=./platform/network --grpc_py
 
 #### C++
 ```
-/home/necromancer/vcpkg/packages/protobuf_x64-linux/tools/protobuf/protoc -I/home/necromancer/vcpkg/packages/protobuf_x64-linux/include/ --proto_path=./proto --cpp_out=./planner/src --grpc_out=./planner/network --plugin=protoc-gen-grpc=/home/necromancer/vcpkg/packages/grpc_x64-linux/tools/grpc/grpc_cpp_plugin state_message.proto
+/home/necromancer/vcpkg/packages/protobuf_x64-linux/tools/protobuf/protoc -I/home/necromancer/vcpkg/packages/protobuf_x64-linux/include/ --proto_path=./proto --cpp_out=./planner/network --grpc_out=./planner/network --plugin=protoc-gen-grpc=/home/necromancer/vcpkg/packages/grpc_x64-linux/tools/grpc/grpc_cpp_plugin state_message.proto
 ```
