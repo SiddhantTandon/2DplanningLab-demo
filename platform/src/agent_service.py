@@ -1,24 +1,28 @@
-from network import position_pb2
-from network import position_pb2_grpc
+from network import state_message_pb2_grpc
+from concurrent import futures
 import grpc
+from src.simulation_platform import SimulationPlatformViz
 
 
-class AgentService:
-    def __init__(self, enable: bool, duration: int):
-        self._channel = grpc.insecure_channel("localhost:50051")
-        self._stub = position_pb2_grpc.PositionServiceStub(self._channel)
-        self._enable = enable
-        self._duration = duration
+class ShareStateService(state_message_pb2_grpc.ShareStateServiceServicer):
+    def __init__(self, workers=10, port=50051, args=""):
+        self._num_workers = workers
+        self._port = port
+        self._sim_platform = SimulationPlatformViz(args)
+
+    def ShareState(self, request_iterator, context):
+        for agent_message in request_iterator:
+            self._sim_platform.getAgentResponseMessage(agent_message)
+            map_message = self._sim_platform.sendMapResponseMessage()
+            yield map_message
+
+    def run_server(self):
+        server = grpc.server(futures.ThreadPoolExecutor(max_workers=self._num_workers))
+        state_message_pb2_grpc.add_ShareStateServiceServicer_to_server(self, server)
+        server.add_insecure_port(f'[::]:{self._port}')
+        server.start()
+        print(f"Server started on port {self._port}")
+        server.wait_for_termination()
     
-    def makeRequest(self) -> position_pb2.PositionRequest:
-        request = position_pb2.PositionRequest(enable=self._enable, duration=self._duration)
-        return request
-    
-    def getResponse(self, request) -> position_pb2_grpc:
-        response = self._stub.StreamPosition(request)
-        return response
-
-    def runAgentService(self):
-        request = self.makeRequest()
-        response = self.getResponse(request)
-        return response
+    def start_sim(self):
+        self._sim_platform.run()

@@ -6,8 +6,8 @@ find_package(gRPC CONFIG REQUIRED)
 
 add_executable(robot_server
     src/robot_server.cc
-    network/position.pb.cc
-    network/position.grpc.pb.cc
+    network/state_message.pb.cc
+    network/state_message.grpc.pb.cc
 )
 # cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/necromancer/vcpkg/scripts/buildsystems/vcpkg.cmake
 target_include_directories(robot_server PRIVATE 
