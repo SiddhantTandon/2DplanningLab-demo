@@ -6,8 +6,8 @@ package state_message;
 
 // position message
 message Position {
-    int row = 1;
-    int col = 2;
+    int32 row = 1;
+    int32 col = 2;
 }
 
 // store robot or dynamic actor state
