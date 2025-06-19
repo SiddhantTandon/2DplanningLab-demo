@@ -1,73 +1,10 @@
-// #include <iostream>
-// #include <chrono>
-// #include <string>
-// #include <thread>
-// #include <grpcpp/grpcpp.h>
-// #include "position.grpc.pb.h"
-// #include <random>
-
-// using grpc::Server;
-// using grpc::ServerBuilder;
-// using grpc::ServerContext;
-// using grpc::ServerWriter;
-// using grpc::Status;
-// using position::PositionService;
-// using position::PositionRequest;
-// using position::PositionResponse;
-// using position::Position;
-
-// class PositionServiceImpl final: public PositionService::Service{
-//     Status StreamPosition(ServerContext* context, const PositionRequest* request,
-//                           ServerWriter<PositionResponse>* writer) override {
-//         if (!request->enable()){ return Status::OK;}
-        
-//         // dummy position settings
-//         int duration = request->duration();
-//         std::random_device rd;
-//         std::mt19937 gen(rd());
-//         std::uniform_real_distribution<> dist_x(-64.0, 64.0);  // range for x
-//         std::uniform_real_distribution<> dist_y(-64.0, 64.0);    // range for y
-
-//         for (int i = 0; i < duration; i++){
-//             PositionResponse response;
-//             Position* pos =  response.mutable_position();
-//             pos->set_x(dist_x(gen));
-//             pos->set_y(dist_y(gen));
-
-//             writer->Write(response);
-//             std::this_thread::sleep_for(std::chrono::seconds(1));
-
-//         }
-//         return Status::OK;
-            
-//         }
-
-// };
-
-// void RunServer(){
-//     std::string server_address("0.0.0.0:50051");
-//     PositionServiceImpl service;
-
-//     ServerBuilder builder;
-//     builder.AddListeningPort(server_address, grpc::InsecureServerCredentials());
-//     builder.RegisterService(&service);
-
-//     std::unique_ptr<Server> server(builder.BuildAndStart());
-//     std::cout << "Server Listening on " << server_address << std::endl;
-//     server->Wait();
-// }
-
-// int main (int argc, char**argv)
-// {
-//     RunServer();
-//     return 0;
-// }
-
 #include <iostream>
 #include <memory>
 #include <string>
 #include <grpcpp/grpcpp.h>
 #include "state_message.grpc.pb.h"
+#include <chrono>
+#include <thread>
 
 using grpc::Channel;
 using grpc::ClientContext;
@@ -107,14 +44,18 @@ public:
         pos->set_col(2);
 
         stream->Write(msg);
-        stream->WritesDone();
 
         MapMessage response;
         while (stream->Read(&response)) {
             std::cout << "Received MapMessage with timestamp: "
                       << response.timestamp().seconds() << std::endl;
+            std::cout << "Received position row: " << response.map_states().at(0).cell_state().position().row() << std::endl;
+            std::cout << "Received position col: " << response.map_states().at(0).cell_state().position().col() << std::endl;
+            std::cout << "Received value: " << response.map_states().at(0).cell_state().value() << std::endl;
+            stream->Write(msg);
+            std::this_thread::sleep_for(std::chrono::seconds(1));
         }
-
+        stream->WritesDone();
         Status status = stream->Finish();
         if (!status.ok()) {
             std::cerr << "ShareState rpc failed: " << status.error_message() << std::endl;

@@ -2,14 +2,16 @@ import pygame
 from src.map_tiling import MapTiling
 from src.agents import RobotSprite
 import utils.helpers as utils
+import utils.map_message_helpers as map_msg_utils
 from dataclasses import dataclass
-from google.protobuf.timestamp_pb2 import Timestamp
-from network import state_message_pb2
+import time
+# from google.protobuf.timestamp_pb2 import Timestamp
+# from network import state_message_pb2
 
 @dataclass
 class Tile:
-    height = 32
-    width = 32
+    height: int = 32
+    width: int = 32
 
 OBJECT = {
     "BED_HEIGHT": 3,
@@ -22,36 +24,22 @@ OBJECT = {
 class SimulationPlatformViz:
     def __init__(self, args):
         self._args = args
-        self._agent_message = ""
-        self._map_message = ""
+        self._agent_message = None
+        self._map_message = None
 
     def getAgentResponseMessage(self, agent_messages):
-        self._message = agent_messages
+        self._agent_message = agent_messages
     
     def sendMapResponseMessage(self):
-        return self._map_message #FIXME: use the code below to fix the next fix me
-        # msg = state_message_pb2.MapMessage()
+        return self._map_message 
 
-        # Set timestamp
-        # timestamp = Timestamp()
-        # timestamp.GetCurrentTime()
-        # msg.timestamp.CopyFrom(timestamp)
-
-        # # Set one valid MapState with CellState
-        # cell_state = state_message_pb2.CellState()
-        # cell_state.position.row = 5
-        # cell_state.position.col = 5
-        # cell_state.value = "debug"
-
-        # map_state = state_message_pb2.MapState()
-        # map_state.cell_state.CopyFrom(cell_state) 
-
-        # msg.map_states.append(map_state)
-
-        # return msg
-
-    def clearMessages(self):
+    def clearMapMessage(self):
         self._map_message.Clear()
+        self._map_message = None
+
+    def clearAgentMessage(self):
+        self._agent_message.Clear()
+        self._agent_message = None
 
     def run(self):
 
@@ -110,81 +98,84 @@ class SimulationPlatformViz:
 
         robot = RobotSprite(pos_x, pos_y, map_tile_group)
 
-        first_step = True
+        if not self._args.warm_start:
+            warm_start = 0
 
-        # if not self._args.just_map:
-        while running:
-            for event in pygame.event.get():
-                if event.type == pygame.QUIT:
-                    running = False
-            display_surface.fill(color=(255,255,255))
-            map_tile_group.draw(display_surface)
-            pygame.draw.rect(display_surface, (255, 0, 0), robot.rect, 2) # bounding box
-            pygame.display.update()
-            if self._agent_message:
-                print(f"received message: {self._agent_message.timestamp}")
+        step = 0 # for grid based movement
+        no_response_counter = 0
+
+        if not self._args.just_map:
+            while running:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
+                display_surface.fill(color=(255,255,255))
+                map_tile_group.draw(display_surface)
+                pygame.draw.rect(display_surface, (255, 0, 0), robot.rect, 2) # bounding box
                 pygame.display.update()
-                #FIXME: make sure this loop runs with map message and cell state protobuf messages
-                self.clearMessages()
-                msg = state_message_pb2.MapMessage()
+                if (step > warm_start and self._agent_message is not None
+                ): #FIXME: condition cannot be on message has to be on step
+                    print(f"received message: {self._agent_message}")
+                    print(f"type of message: {type(self._agent_message)}")
+                    pygame.display.update()
+                    self.clearMapMessage()
+                    msg = map_msg_utils.generate_map_message()
 
-                # Set timestamp
-                timestamp = Timestamp()
-                timestamp.GetCurrentTime()
-                msg.timestamp.CopyFrom(timestamp)
+                    # Set timestamp
+                    timestamp = map_msg_utils.set_timestamp()
+                    msg.timestamp.CopyFrom(timestamp)
 
-                # Set one valid MapState with CellState
-                cell_state = state_message_pb2.CellState()
-                cell_state.position.row = 5
-                cell_state.position.col = 5
-                cell_state.value = "debug"
+                    # Set one valid MapState with CellState
+                    cell_state = map_msg_utils.set_cell_state(5, 5, "debug")
 
-                map_state = state_message_pb2.MapState()
-                map_state.cell_state.CopyFrom(cell_state) 
+                    map_state = map_msg_utils.generate_map_state()
+                    map_state.cell_state.CopyFrom(cell_state) 
 
-                msg.map_states.append(map_state)
-                self._map_message = msg
-                self.sendMapResponseMessage()
-                self.clearMessages()
-            else: #TODO: Figure out the first step message about the map state
-                first_step = False
-                msg = state_message_pb2.MapMessage()
+                    msg.map_states.append(map_state)
+                    self._map_message = msg
+                    self.sendMapResponseMessage()
+                    self.clearAgentMessage()
+                    no_response_counter = 0
+                else: #TODO: Figure out the first step message about the map state
 
-                # Set timestamp
-                timestamp = Timestamp()
-                timestamp.GetCurrentTime()
-                msg.timestamp.CopyFrom(timestamp)
+                    if no_response_counter == 10:
+                        running = False
 
-                # Set one valid MapState with CellState
-                cell_state = state_message_pb2.CellState()
-                cell_state.position.row = 5
-                cell_state.position.col = 5
-                cell_state.value = "debug"
+                    msg = map_msg_utils.generate_map_message()
 
-                map_state = state_message_pb2.MapState()
-                map_state.cell_state.CopyFrom(cell_state) 
+                    # Set timestamp
+                    timestamp = map_msg_utils.set_timestamp()
+                    msg.timestamp.CopyFrom(timestamp)
 
-                msg.map_states.append(map_state)
-                self._map_message = msg
-                self.sendMapResponseMessage()
-                # self.clearMessages() #FIXME: Clear message clears the message before it is sent. 
-                #FIXME: Need to figure out how to clear message before setting the value
-            clock.tick(FPS)
-            if not running:
-                break
-        # else:
-        #     while running:
-        #         print("I am here")
-        #         for event in pygame.event.get():
-        #             if event.type == pygame.QUIT:
-        #                 running = False
+                    # Set one valid MapState with CellState
+                    cell_state = map_msg_utils.set_cell_state(5, 5, "debug")
+
+                    map_state = map_msg_utils.generate_map_state()
+                    map_state.cell_state.CopyFrom(cell_state) 
+
+                    msg.map_states.append(map_state)
+                    self._map_message = msg
+                    self.sendMapResponseMessage()
+                    no_response_counter += 1
+                    # self.clearMessages() #FIXME: Clear message clears the message before it is sent. 
+                    #FIXME: Need to figure out how to clear message before setting the value
+                clock.tick(FPS)
+                step += 1
+                time.sleep(1)
+                if not running:
+                    break
+        else:
+            while running:
+                for event in pygame.event.get():
+                    if event.type == pygame.QUIT:
+                        running = False
                 
-        #         display_surface.fill(color=(255,255,255))
+                display_surface.fill(color=(255,255,255))
 
-        #         map_tile_group.draw(display_surface)
+                map_tile_group.draw(display_surface)
 
-        #         pygame.display.update()
-        #         if not running:
-        #             break
+                pygame.display.update()
+                if not running:
+                    break
 
         pygame.quit()
