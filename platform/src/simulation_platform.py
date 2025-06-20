@@ -116,7 +116,14 @@ class SimulationPlatformViz:
                 if (step > warm_start and self._agent_message is not None
                 ): #FIXME: condition cannot be on message has to be on step
                     print(f"received message: {self._agent_message}")
-                    print(f"type of message: {type(self._agent_message)}")
+
+                    rec_agents = self._agent_message.agents
+                    for agents in rec_agents:
+                        if agents.agent_id == "1":
+                            rec_position = agents.position
+                            print(f"the positions are {rec_position.row} and {rec_position.col}")
+                            robot.updatePosition(pos_x + (rec_position.row * 32), pos_y + (rec_position.col))
+
                     pygame.display.update()
                     self.clearMapMessage()
                     msg = map_msg_utils.generate_map_message()

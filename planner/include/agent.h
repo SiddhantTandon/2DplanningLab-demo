@@ -1,23 +1,25 @@
+#pragma once
 #include <iostream>
 #include <vector>
 #include <string>
+#include <spdlog/spdlog.h>
 
-struct Position{
+struct AgentPosition{
     int row;
     int col;
 };
 
 class BasicObject{
     protected:
-        int id;
-        Position position;
+        std::string id;
+        AgentPosition position;
         std::string agent_type;
     public:
         BasicObject(std::string id, std::string agent_type);
         ~BasicObject();
-        Position getPosition();
+        AgentPosition getPosition();
         std::string getType();
-        int getID();
+        std::string getID();
 };
 
 class DynamicObstacle: public BasicObject{
@@ -31,12 +33,15 @@ class DynamicObstacle: public BasicObject{
 
 class Ego: public BasicObject{
     private:
-        std::vector<Position> sub_goals;
-        Position current_goal;
+        std::vector<AgentPosition> sub_goals;
+        AgentPosition current_goal;
         std::vector<BasicObject> objects;
     public:
-        Ego();
-        ~Ego();
-        std::vector<Position> getGoals();
+        Ego(std::string id, std::string agent_type) : BasicObject(id, agent_type){
+            spdlog::info("Loaded agent successfully!");
+        };
+        ~Ego(){spdlog::debug("Destroyed Ego instance");};
+        std::vector<AgentPosition> getGoals();
         std::vector<BasicObject> getObjects();
+        void updatePosition(AgentPosition update);
 };
