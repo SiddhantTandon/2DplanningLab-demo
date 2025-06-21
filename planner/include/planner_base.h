@@ -10,9 +10,9 @@ class Search{
     public:
         Search(Node start, Node goal);
         ~Search();
-        void getNeighbors();
-        void getGoal();
+        std::vector<Node> getNeighbors();
+        Node getGoal();
         bool checkGoal(Node input);
-        void setGoal();
-        void setStart();
+        void setGoal(Node newgoal);
+        void setStart(Node newstart);
 };

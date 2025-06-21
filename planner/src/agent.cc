@@ -26,6 +26,11 @@ std::string BasicObject::getID(){
     return this->id;
 }
 
+void BasicObject::updateMapCurrentPosition(int row, int col){
+    std::string empty_space = "x"; // this is because all objects behind them should leave empty space at the current timestep
+    this->map->updateMap(row, col, empty_space);
+}
+
 std::vector<AgentPosition> Ego::getGoals(){
     return this->sub_goals;
 }
@@ -35,6 +40,7 @@ std::vector<BasicObject> Ego::getObjects(){
 }
 
 void Ego::updatePosition(AgentPosition update){
+    this->updateMapCurrentPosition(update.row, update.col);
     this->position.row += update.row;
     this->position.col += update.col;
 }

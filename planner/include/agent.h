@@ -19,8 +19,10 @@ class BasicObject{
         AgentPosition getPosition();
         std::string getType();
         std::string getID();
+        void updateMapCurrentPosition(int row, int col);
 };
 
+//TODO: adding definitions for dynamic later
 class DynamicObstacle: public BasicObject{
     private:
         std::string agent_type;
