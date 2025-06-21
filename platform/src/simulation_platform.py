@@ -54,7 +54,7 @@ class SimulationPlatformViz:
         display_surface = pygame.display.set_mode((32*32,32*16))
 
         #fps and clock
-        FPS = 15
+        FPS = 1
         clock = pygame.time.Clock()
 
         # sprite groups
@@ -63,6 +63,7 @@ class SimulationPlatformViz:
         object_tile_group = pygame.sprite.Group()
 
         # tiling
+        #TODO: add remaining assets to the map
         for j in range(len(map_grid[0])):
             for i in range(len(map_grid)):
                 if map_grid[i][j] == 'w':
@@ -92,8 +93,8 @@ class SimulationPlatformViz:
         running = True
 
         # agent coord
-        pos_x = 325
-        pos_y = 325
+        pos_x = 320
+        pos_y = 320
         running = True
 
         robot = RobotSprite(pos_x, pos_y, map_tile_group)
@@ -125,6 +126,10 @@ class SimulationPlatformViz:
                             robot.updatePosition(pos_x + (rec_position.row * 32), pos_y + (rec_position.col))
 
                     pygame.display.update()
+
+                    if map_grid[rec_position.row][rec_position.col] is not "x":
+                        print(f"Collision occured map value: {map_grid[rec_position.row][rec_position.col]}!")
+
                     self.clearMapMessage()
                     msg = map_msg_utils.generate_map_message()
 
