@@ -1,8 +1,5 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <string>
-#include <spdlog/spdlog.h>
+#include "common_utils.h"
 
 struct AgentPosition{
     int row;
@@ -14,9 +11,11 @@ class BasicObject{
         std::string id;
         AgentPosition position;
         std::string agent_type;
+        MapGraph* map; // should use pointer here since we need to update the same map object
     public:
         BasicObject(std::string id, std::string agent_type);
         ~BasicObject();
+        void setPosition(int row, int col);
         AgentPosition getPosition();
         std::string getType();
         std::string getID();

@@ -61,6 +61,7 @@ class SimulationPlatformViz:
         map_tile_group = pygame.sprite.Group()
         wall_tile_group = pygame.sprite.Group()
         object_tile_group = pygame.sprite.Group()
+        #FIXME: Add my name to the bottom left corner of the window
 
         # tiling
         #TODO: add remaining assets to the map
@@ -99,6 +100,7 @@ class SimulationPlatformViz:
 
         robot = RobotSprite(pos_x, pos_y, map_tile_group)
 
+        #TODO: add warm start to arguments
         if not self._args.warm_start:
             warm_start = 0
 
@@ -148,7 +150,7 @@ class SimulationPlatformViz:
                     self.sendMapResponseMessage()
                     self.clearAgentMessage()
                     no_response_counter = 0
-                else: #TODO: Figure out the first step message about the map state
+                else:
 
                     if no_response_counter == 10:
                         running = False
@@ -169,8 +171,6 @@ class SimulationPlatformViz:
                     self._map_message = msg
                     self.sendMapResponseMessage()
                     no_response_counter += 1
-                    # self.clearMessages() #FIXME: Clear message clears the message before it is sent. 
-                    #FIXME: Need to figure out how to clear message before setting the value
                 clock.tick(FPS)
                 step += 1
                 time.sleep(1)

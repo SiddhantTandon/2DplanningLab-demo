@@ -9,6 +9,11 @@ BasicObject::~BasicObject(){
     std::cout<<"Deleting BasicObject instance" << std::endl;
 }
 
+void BasicObject::setPosition(int row, int col){
+    this->position.row = row;
+    this->position.col = col;
+}
+
 AgentPosition BasicObject::getPosition(){
     return this->position;
 }
