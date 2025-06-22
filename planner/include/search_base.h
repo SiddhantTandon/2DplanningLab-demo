@@ -8,7 +8,7 @@ class Search{
         Node goal;
         MapGraph* map;
     public:
-        Search(Node start, Node goal);
+        Search(Node start, Node goal, MapGraph* map);
         ~Search();
         void setMapforSearch(MapGraph* map);
         std::vector<Node> getNeighbors(Node current);
@@ -16,4 +16,5 @@ class Search{
         bool checkGoal(Node input);
         void setGoal(Node newgoal);
         void setStart(Node newstart);
+        void printMapStats();
 };

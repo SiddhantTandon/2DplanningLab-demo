@@ -118,7 +118,7 @@ class SimulationPlatformViz:
                 pygame.display.update()
                 if (step > warm_start and self._agent_message is not None
                 ): #FIXME: condition cannot be on message has to be on step
-                    print(f"received message: {self._agent_message}")
+                    #print(f"received message: {self._agent_message}")
 
                     rec_agents = self._agent_message.agents
                     for agents in rec_agents:

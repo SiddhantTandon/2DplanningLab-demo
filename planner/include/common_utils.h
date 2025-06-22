@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <algorithm>
 #include <iostream>
 #include <set>
 #include <cmath>
@@ -14,6 +15,9 @@ struct Node{
     int row;
     int col;
     std::string map_value; // this will also be used for "type" of agents/objects
+    bool operator==(const Node& other) const {
+        return row == other.row && col == other.col;
+    }
 };
 
 class MapGraph{
@@ -35,4 +39,5 @@ class MapGraph{
         void updateMap(int row, int col, std::string value);
         void emptyMapChangeRegister();
         std::vector<Node> getMapChanges();
+        void printStats();
 };

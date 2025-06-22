@@ -15,6 +15,7 @@ void BasicObject::setPosition(int row, int col){
 }
 
 Node BasicObject::getPosition(){
+    spdlog::info("Ego position is at: {},{}", this->position.row, this->position.col);
     return this->position;
 }
 
@@ -52,9 +53,15 @@ void Ego::addGoal(Node sub_goal){
 }
 
 void Ego::updatePosition(Node update){
+    //TODO: delete this afterwards
+    spdlog::info("Delete this to get proper updates!");
+    int delta_row = update.row - this->position.row; 
+    int delta_col = update.col - this->position.col;
     this->updateMapCurrentPosition(update.row, update.col);
-    this->position.row += update.row;
-    this->position.col += update.col;
+    this->position.row += delta_row;
+    this->position.col += delta_col;    
+    //this->position.row += update.row;
+    //this->position.col += update.col;
 }
 
 void Ego::saveToMovementTrace(std::string move){
@@ -75,7 +82,8 @@ void Ego::makePath(){
     {
         Node goal = this->all_goals_copy.front();
         this->all_goals_copy.pop();
-        AStar a_star_planner(start, goal);
+        AStar a_star_planner(start, goal, this->map);
+        spdlog::info("Starting A* to create a path");
         a_star_planner.planTrajectory();
         std::vector<Node> returned_list = a_star_planner.getVisitedNodesList();
         for (int j = 0; j < returned_list.size(); j++)

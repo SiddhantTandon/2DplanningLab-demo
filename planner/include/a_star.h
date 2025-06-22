@@ -27,8 +27,8 @@ class AStar: public Search{
         const float move_cost = 1; // we are only moving one grid at a time even waiting has a cost
         float travel_cost = 0; // total cost till now for visited nodes
     public:
-        AStar(Node start, Node goal): Search(start, goal){
-            spdlog::info("Start Location: {},{} and Goal Location: {},{}", start.row, start.col, goal.row, goal.col);
+        AStar(Node start, Node goal, MapGraph* map): Search(start, goal, map){
+            spdlog::info("Start Location: ({},{}) and Goal Location: ({},{})", start.row, start.col, goal.row, goal.col);
         };
         void planTrajectory(); // in TVA you can call this for each time?
         PriorityNode getCostforNode(Node expandedNode);

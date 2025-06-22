@@ -3,10 +3,10 @@
 PriorityNode AStar::getCostforNode(Node expandedNode){
     float euclidean_cost = std::pow(std::pow((this->goal.row - expandedNode.row), 2)
                             + std::pow((this->goal.col - expandedNode.col), 2), 0.5);
-    float cost = this->move_cost + this->travel_cost + euclidean_cost;
+    //float cost = this->move_cost + this->travel_cost + euclidean_cost;
     PriorityNode expandedNodePriority;
     expandedNodePriority.expandedNode = expandedNode;
-    expandedNodePriority.cost = cost;
+    expandedNodePriority.cost = euclidean_cost;
     return expandedNodePriority;
 }
 
@@ -17,11 +17,14 @@ void AStar::planTrajectory(){
     startNode.cost = 0; // starting position
     this->expanded.push(startNode);
     this->visited.push_back(this->start);
+    spdlog::info("Starting loop for expanded nodes!");
     // start the while loop
     while (!this->expanded.empty())
     {
         // pop the node
         PriorityNode popped_node = this->expanded.top();
+        spdlog::info("Expanding node at ({},{})",popped_node.expandedNode.row, popped_node.expandedNode.col);
+        spdlog::info("Its cost: {}", popped_node.cost);
         this->expanded.pop();
         // check if it is the goal -> break
         Node current_node = popped_node.expandedNode;
@@ -39,7 +42,11 @@ void AStar::planTrajectory(){
         {
             PriorityNode priority_n = this->getCostforNode(n);
             // add the neighbors to expanded queue
-            this->expanded.push(priority_n);
+            if (std::find(visited.begin(), visited.end(), priority_n.expandedNode) != visited.end()) {
+                spdlog::info("Skipping already visited!");
+            } else {
+                this->expanded.push(priority_n);
+            }
         }
         // add the node to visited queue
         this->visited.push_back(current_node);

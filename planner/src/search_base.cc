@@ -1,8 +1,10 @@
 #include "search_base.h"
 
-Search::Search(Node start, Node goal){
+Search::Search(Node start, Node goal, MapGraph* map){
     this->start = start;
     this->goal = goal;
+    this->setMapforSearch(map);
+    this->printMapStats();
 }
 
 void Search::setMapforSearch(MapGraph* map){
@@ -28,6 +30,7 @@ void Search::setStart(Node newstart){
 // Filtering out blocked cells since any search would do that 
 std::vector<Node> Search::getNeighbors(Node current){
     // add something to return vectors
+    spdlog::info("Searching neighbors...");
     std::vector<Node> neighbor_list;
     
     // left
@@ -63,7 +66,12 @@ std::vector<Node> Search::getNeighbors(Node current){
         }
     }
 
+    spdlog::info("Found neighbors!");
     return neighbor_list;
+}
+
+void Search::printMapStats(){
+    this->map->printStats();
 }
 
 Search::~Search(){

@@ -93,6 +93,12 @@ void MapGraph::emptyMapChangeRegister(){
     }
 }
 
+
+void MapGraph::printStats(){
+    spdlog::info("This is the size of the col: ", this->col_size);
+    spdlog::info("This is the size of the row: {}", this->row_size);
+}
+
 MapGraph::~MapGraph(){
     spdlog::debug("Destroying map object!");
 }
