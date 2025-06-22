@@ -8,6 +8,7 @@
 #include <vector>
 #include <spdlog/spdlog.h>
 
+#include "common_utils.h"
 #include "agent.h"
 
 using grpc::Channel;
@@ -37,42 +38,22 @@ public:
         std::shared_ptr<ClientReaderWriter<AgentMessage, MapMessage>> stream(
             stub_->ShareState(&context));
         
-        Ego mock_agent("1", "ego");
-        
-        // message to send
-        AgentMessage msg;
+        std::string filename = "../../maps/map_16x32_indoor.txt";
+        MapGraph map(filename);
+        if (map.setGrid())
+        {
 
-        // Set timestamp
-        google::protobuf::Timestamp* ts = msg.mutable_timestamp();
-        std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(
-        std::chrono::system_clock::now().time_since_epoch());
-        ts->set_seconds(sec.count() + 1);  // or use actual time
+            Ego mock_agent("1", "ego");
 
-        // Add agent
-        AgentState* agent = msg.add_agents();
-        agent->set_agent_id(mock_agent.getID());
+            mock_agent.setMap(&map);
 
-        // Set position
-        Position* pos = agent->mutable_position();
-        Node mock_agent_pos = mock_agent.getPosition();
-        pos->set_row(mock_agent_pos.row);
-        pos->set_col(mock_agent_pos.col);
+            mock_agent.setPosition(4, 12);
+            Node goal{14, 27};
+            mock_agent.addGoal(goal);
 
-        stream->Write(msg);
-
-        MapMessage response;
-        while (stream->Read(&response)) {
-            std::cout << "Received MapMessage with timestamp: "
-                      << response.timestamp().seconds() << std::endl;
-            std::cout << "Received position row: " << response.map_states().at(0).cell_state().position().row() << std::endl;
-            std::cout << "Received position col: " << response.map_states().at(0).cell_state().position().col() << std::endl;
-            std::cout << "Received value: " << response.map_states().at(0).cell_state().value() << std::endl;
-
-            int rand_row = choices[dist(gen)];
-            int rand_col = choices[dist(gen)];
-            Node new_pos{rand_row, rand_col};
-            mock_agent.updatePosition(new_pos);
-
+            mock_agent.makePath();
+            
+            // message to send
             AgentMessage msg;
 
             // Set timestamp
@@ -92,12 +73,53 @@ public:
             pos->set_col(mock_agent_pos.col);
 
             stream->Write(msg);
-            std::this_thread::sleep_for(std::chrono::seconds(1));
-        }
-        stream->WritesDone();
-        Status status = stream->Finish();
-        if (!status.ok()) {
-            std::cerr << "ShareState rpc failed: " << status.error_message() << std::endl;
+
+            MapMessage response;
+            while (stream->Read(&response)) {
+                std::cout << "Received MapMessage with timestamp: "
+                        << response.timestamp().seconds() << std::endl;
+                std::cout << "Received position row: " << response.map_states().at(0).cell_state().position().row() << std::endl;
+                std::cout << "Received position col: " << response.map_states().at(0).cell_state().position().col() << std::endl;
+                std::cout << "Received value: " << response.map_states().at(0).cell_state().value() << std::endl;
+
+                // int rand_row = choices[dist(gen)];
+                // int rand_col = choices[dist(gen)];
+                // Node new_pos{rand_row, rand_col};
+
+                std::vector<Node> ego_positions = mock_agent.getPath();
+                
+                for (Node n: ego_positions)
+                {
+
+                    mock_agent.updatePosition(n);
+
+                    AgentMessage msg;
+
+                    // Set timestamp
+                    google::protobuf::Timestamp* ts = msg.mutable_timestamp();
+                    std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(
+                    std::chrono::system_clock::now().time_since_epoch());
+                    ts->set_seconds(sec.count() + 1);  // or use actual time
+
+                    // Add agent
+                    AgentState* agent = msg.add_agents();
+                    agent->set_agent_id(mock_agent.getID());
+
+                    // Set position
+                    Position* pos = agent->mutable_position();
+                    Node mock_agent_pos = mock_agent.getPosition();
+                    pos->set_row(mock_agent_pos.row);
+                    pos->set_col(mock_agent_pos.col);
+
+                    stream->Write(msg);
+                    std::this_thread::sleep_for(std::chrono::seconds(1));
+                }
+            }
+            stream->WritesDone();
+            Status status = stream->Finish();
+            if (!status.ok()) {
+                std::cerr << "ShareState rpc failed: " << status.error_message() << std::endl;
+            }
         }
     }
 

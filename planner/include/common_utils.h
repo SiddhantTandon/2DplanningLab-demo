@@ -4,6 +4,10 @@
 #include <queue>
 #include <iostream>
 #include <set>
+#include <cmath>
+#include <fstream>
+#include <regex>
+#include <filesystem>
 #include <spdlog/spdlog.h>
 
 struct Node{
@@ -16,15 +20,16 @@ class MapGraph{
     private:
         std::string map_file;
         std::vector<std::string> grid; // we will use single line vector since that is most efficient for real time
-        int row_size;
-        int col_size;
+        int row_size = 0;
+        int col_size = 0;
         std::queue<std::pair<Node, std::string>> updatedCells; //  just use queue 
     public:
         MapGraph(std::string file);
         ~MapGraph();
+        void extractMapDimensions();
         int getColSize();
         int getRowSize();
-        void setGrid();
+        bool setGrid();
         Node getNode(int row, int col);
         std::vector<Node> validEmptyNodes(); // for random start locations
         void updateMap(int row, int col, std::string value);

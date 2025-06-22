@@ -4,6 +4,21 @@ MapGraph::MapGraph(std::string file){
     this->map_file = file;
 }
 
+
+void MapGraph::extractMapDimensions(){
+    std::string file = std::filesystem::path(this->map_file).filename().string();
+    std::regex pattern(R"(map_(\d+)x(\d+)_.*)");
+
+    std::smatch match;
+    if (std::regex_match(file, match, pattern)) {
+        this->row_size = std::stoi(match[1]); 
+        this->col_size = std::stoi(match[2]);  
+    }
+    else{
+        spdlog::error("Could not extract the dimensions from filename {}", this->map_file);
+    }
+}
+
 int MapGraph::getColSize(){
     return this->col_size;
 }
@@ -12,10 +27,30 @@ int MapGraph::getRowSize(){
     return this->row_size;
 }
 
-void MapGraph::setGrid(){
-    //TODO: 
+bool MapGraph::setGrid(){
     //read map file and set the grid
-    // use the size to set the col and row values
+    this->extractMapDimensions();
+    std::ifstream infile(this->map_file);
+    if (!infile.is_open()) {
+        std::cerr << "Failed to open file: " << this->map_file << std::endl;
+        return false;
+    }
+    std::string line;
+    int count = 0;
+    while (std::getline(infile, line) && count < this->row_size) {
+        if (line.size() != this->col_size){
+            spdlog::error("Inconsistent row width detected!");
+            return false;
+        }
+
+        for (char c : line) {
+            grid.push_back(std::string(1, c));
+        }
+        count++;
+    }
+
+    infile.close();
+    return true;
 }
 
 Node MapGraph::getNode(int row, int col){

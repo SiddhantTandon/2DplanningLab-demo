@@ -19,6 +19,8 @@ class BasicObject{
         std::string getType();
         std::string getID();
         void updateMapCurrentPosition(int row, int col);
+        void setMap(MapGraph* map);
+        std::vector<Node> getPath();
 };
 
 //TODO: adding definitions for dynamic later
@@ -49,5 +51,5 @@ class Ego: public BasicObject{
         std::vector<BasicObject> getObjects();
         void updatePosition(Node update);
         void saveToMovementTrace(std::string move);
-        void getPath();
+        void makePath();
 };

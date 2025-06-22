@@ -31,6 +31,14 @@ void BasicObject::updateMapCurrentPosition(int row, int col){
     this->map->updateMap(row, col, empty_space);
 }
 
+void BasicObject::setMap(MapGraph* map){
+    this->map = map;
+}
+
+std::vector<Node> BasicObject::getPath(){
+    return this->position_list;
+}
+
 std::vector<Node> Ego::showGoals(){
     return this->all_goals;
 }
@@ -53,7 +61,7 @@ void Ego::saveToMovementTrace(std::string move){
     this->movementTrace.push_back(move);
 }
 
-void Ego::getPath(){
+void Ego::makePath(){
 
     // fill queue
     for (int i =0; i < this->all_goals.size(); i++)
@@ -68,7 +76,8 @@ void Ego::getPath(){
         Node goal = this->all_goals_copy.front();
         this->all_goals_copy.pop();
         AStar a_star_planner(start, goal);
-        std::vector<Node> returned_list = a_star_planner.planTrajectory();
+        a_star_planner.planTrajectory();
+        std::vector<Node> returned_list = a_star_planner.getVisitedNodesList();
         for (int j = 0; j < returned_list.size(); j++)
         {
             this->position_list.push_back(returned_list[j]);
@@ -78,3 +87,4 @@ void Ego::getPath(){
     }
     
 }
+
