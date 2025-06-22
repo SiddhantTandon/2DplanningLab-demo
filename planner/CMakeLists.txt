@@ -10,6 +10,9 @@ add_executable(robot_server
     network/state_message.pb.cc
     network/state_message.grpc.pb.cc
     src/agent.cc
+    src/common_utils.cc
+    src/search_base.cc
+    src/a_star.cc
 )
 # cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/necromancer/vcpkg/scripts/buildsystems/vcpkg.cmake
 target_include_directories(robot_server PRIVATE 

@@ -42,10 +42,10 @@ def main():
     args = parser.parse_args()
 
     service = ShareStateService(workers=10, port=50051, args=args)
-
-    # Start gRPC server in a background daemon thread -> this will ensure that the port closes after pygame window is closed
-    grpc_thread = threading.Thread(target=service.run_server, daemon=True)
-    grpc_thread.start()
+    if not args.just_map:
+        # Start gRPC server in a background daemon thread -> this will ensure that the port closes after pygame window is closed
+        grpc_thread = threading.Thread(target=service.run_server, daemon=True)
+        grpc_thread.start()
 
     try:
         # Start simulation pygame in main thread
@@ -53,7 +53,8 @@ def main():
         print("Simulation ended. Main thread exiting.")
     finally:
         # Ensure cleanup happens no matter how the program exits
-        service.stop_server()
+        if not args.just_map:
+            service.stop_server()
         on_exit()
 
 if __name__ == "__main__":

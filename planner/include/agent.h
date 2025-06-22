@@ -1,30 +1,32 @@
 #pragma once
-#include <iostream>
-#include <vector>
-#include <string>
-#include <spdlog/spdlog.h>
+#include "common_utils.h"
+#include "a_star.h"
 
-struct AgentPosition{
-    int row;
-    int col;
-};
+//TODO: maybe need to add a time struct later for tracking time
 
 class BasicObject{
     protected:
         std::string id;
-        AgentPosition position;
+        Node position;
         std::string agent_type;
+        MapGraph* map; // should use pointer here since we need to update the same map object
+        std::vector<Node> position_list; //TODO: confusion between queue or vector
     public:
         BasicObject(std::string id, std::string agent_type);
         ~BasicObject();
-        AgentPosition getPosition();
+        void setPosition(int row, int col);
+        Node getPosition();
         std::string getType();
         std::string getID();
+        void updateMapCurrentPosition(int row, int col);
+        void setMap(MapGraph* map);
+        std::vector<Node> getPath();
 };
 
+//TODO: adding definitions for dynamic later
 class DynamicObstacle: public BasicObject{
     private:
-        std::string agent_type;
+        std::string behavior;
     public:
         DynamicObstacle();
         ~DynamicObstacle();
@@ -33,15 +35,21 @@ class DynamicObstacle: public BasicObject{
 
 class Ego: public BasicObject{
     private:
-        std::vector<AgentPosition> sub_goals;
-        AgentPosition current_goal;
+        std::vector<Node> all_goals;
+        std::queue<Node> all_goals_copy;
+        Node current_goal; // this is for debugging
         std::vector<BasicObject> objects;
+        Node previous_position;
+        std::vector<std::string> movementTrace; //useful for moving and xAi approaches?
     public:
         Ego(std::string id, std::string agent_type) : BasicObject(id, agent_type){
             spdlog::info("Loaded agent successfully!");
         };
         ~Ego(){spdlog::debug("Destroyed Ego instance");};
-        std::vector<AgentPosition> getGoals();
+        std::vector<Node> showGoals();
+        void addGoal(Node sub_goal);
         std::vector<BasicObject> getObjects();
-        void updatePosition(AgentPosition update);
+        void updatePosition(Node update);
+        void saveToMovementTrace(std::string move);
+        void makePath();
 };

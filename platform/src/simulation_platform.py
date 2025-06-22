@@ -54,15 +54,17 @@ class SimulationPlatformViz:
         display_surface = pygame.display.set_mode((32*32,32*16))
 
         #fps and clock
-        FPS = 15
+        FPS = 1
         clock = pygame.time.Clock()
 
         # sprite groups
         map_tile_group = pygame.sprite.Group()
         wall_tile_group = pygame.sprite.Group()
         object_tile_group = pygame.sprite.Group()
+        #FIXME: Add my name to the bottom left corner of the window
 
         # tiling
+        #TODO: add remaining assets to the map
         for j in range(len(map_grid[0])):
             for i in range(len(map_grid)):
                 if map_grid[i][j] == 'w':
@@ -92,12 +94,13 @@ class SimulationPlatformViz:
         running = True
 
         # agent coord
-        pos_x = 325
-        pos_y = 325
+        pos_x = 320
+        pos_y = 320
         running = True
 
         robot = RobotSprite(pos_x, pos_y, map_tile_group)
 
+        #TODO: add warm start to arguments
         if not self._args.warm_start:
             warm_start = 0
 
@@ -115,7 +118,7 @@ class SimulationPlatformViz:
                 pygame.display.update()
                 if (step > warm_start and self._agent_message is not None
                 ): #FIXME: condition cannot be on message has to be on step
-                    print(f"received message: {self._agent_message}")
+                    #print(f"received message: {self._agent_message}")
 
                     rec_agents = self._agent_message.agents
                     for agents in rec_agents:
@@ -125,6 +128,10 @@ class SimulationPlatformViz:
                             robot.updatePosition(pos_x + (rec_position.row * 32), pos_y + (rec_position.col))
 
                     pygame.display.update()
+
+                    if map_grid[rec_position.row][rec_position.col] is not "x":
+                        print(f"Collision occured map value: {map_grid[rec_position.row][rec_position.col]}!")
+
                     self.clearMapMessage()
                     msg = map_msg_utils.generate_map_message()
 
@@ -143,7 +150,7 @@ class SimulationPlatformViz:
                     self.sendMapResponseMessage()
                     self.clearAgentMessage()
                     no_response_counter = 0
-                else: #TODO: Figure out the first step message about the map state
+                else:
 
                     if no_response_counter == 10:
                         running = False
@@ -164,8 +171,6 @@ class SimulationPlatformViz:
                     self._map_message = msg
                     self.sendMapResponseMessage()
                     no_response_counter += 1
-                    # self.clearMessages() #FIXME: Clear message clears the message before it is sent. 
-                    #FIXME: Need to figure out how to clear message before setting the value
                 clock.tick(FPS)
                 step += 1
                 time.sleep(1)
