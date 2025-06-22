@@ -3,7 +3,7 @@
 #include <vector>
 #include <queue>
 #include <iostream>
-#include <unordered_map>
+#include <set>
 #include <spdlog/spdlog.h>
 
 struct Node{
@@ -18,10 +18,12 @@ class MapGraph{
         std::vector<std::string> grid; // we will use single line vector since that is most efficient for real time
         int row_size;
         int col_size;
-        std::queue<std::pair<Node,std::string>> updatedCells; //  just use queue 
+        std::queue<std::pair<Node, std::string>> updatedCells; //  just use queue 
     public:
         MapGraph(std::string file);
         ~MapGraph();
+        int getColSize();
+        int getRowSize();
         void setGrid();
         Node getNode(int row, int col);
         std::vector<Node> validEmptyNodes(); // for random start locations

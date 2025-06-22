@@ -4,7 +4,16 @@ MapGraph::MapGraph(std::string file){
     this->map_file = file;
 }
 
+int MapGraph::getColSize(){
+    return this->col_size;
+}
+
+int MapGraph::getRowSize(){
+    return this->row_size;
+}
+
 void MapGraph::setGrid(){
+    //TODO: 
     //read map file and set the grid
     // use the size to set the col and row values
 }

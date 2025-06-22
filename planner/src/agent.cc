@@ -14,7 +14,7 @@ void BasicObject::setPosition(int row, int col){
     this->position.col = col;
 }
 
-AgentPosition BasicObject::getPosition(){
+Node BasicObject::getPosition(){
     return this->position;
 }
 
@@ -31,16 +31,50 @@ void BasicObject::updateMapCurrentPosition(int row, int col){
     this->map->updateMap(row, col, empty_space);
 }
 
-std::vector<AgentPosition> Ego::getGoals(){
-    return this->sub_goals;
+std::vector<Node> Ego::showGoals(){
+    return this->all_goals;
 }
 
 std::vector<BasicObject> Ego::getObjects(){
     return this->objects;
 }
 
-void Ego::updatePosition(AgentPosition update){
+void Ego::addGoal(Node sub_goal){
+    this->all_goals.push_back(sub_goal);
+}
+
+void Ego::updatePosition(Node update){
     this->updateMapCurrentPosition(update.row, update.col);
     this->position.row += update.row;
     this->position.col += update.col;
+}
+
+void Ego::saveToMovementTrace(std::string move){
+    this->movementTrace.push_back(move);
+}
+
+void Ego::getPath(){
+
+    // fill queue
+    for (int i =0; i < this->all_goals.size(); i++)
+    {
+        this->all_goals_copy.push(this->all_goals[i]);
+    }
+
+    Node start = this->position;
+
+    while (!this->all_goals_copy.empty())
+    {
+        Node goal = this->all_goals_copy.front();
+        this->all_goals_copy.pop();
+        AStar a_star_planner(start, goal);
+        std::vector<Node> returned_list = a_star_planner.planTrajectory();
+        for (int j = 0; j < returned_list.size(); j++)
+        {
+            this->position_list.push_back(returned_list[j]);
+        }
+
+        Node start = goal;
+    }
+    
 }

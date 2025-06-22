@@ -54,7 +54,7 @@ public:
 
         // Set position
         Position* pos = agent->mutable_position();
-        AgentPosition mock_agent_pos = mock_agent.getPosition();
+        Node mock_agent_pos = mock_agent.getPosition();
         pos->set_row(mock_agent_pos.row);
         pos->set_col(mock_agent_pos.col);
 
@@ -70,7 +70,7 @@ public:
 
             int rand_row = choices[dist(gen)];
             int rand_col = choices[dist(gen)];
-            AgentPosition new_pos{rand_row, rand_col};
+            Node new_pos{rand_row, rand_col};
             mock_agent.updatePosition(new_pos);
 
             AgentMessage msg;
@@ -87,7 +87,7 @@ public:
 
             // Set position
             Position* pos = agent->mutable_position();
-            AgentPosition mock_agent_pos = mock_agent.getPosition();
+            Node mock_agent_pos = mock_agent.getPosition();
             pos->set_row(mock_agent_pos.row);
             pos->set_col(mock_agent_pos.col);
 

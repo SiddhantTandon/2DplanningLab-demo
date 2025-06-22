@@ -12,6 +12,7 @@ add_executable(robot_server
     src/agent.cc
     src/common_utils.cc
     src/planner_base.cc
+    src/a_star.cc
 )
 # cmake .. -DCMAKE_TOOLCHAIN_FILE=/home/necromancer/vcpkg/scripts/buildsystems/vcpkg.cmake
 target_include_directories(robot_server PRIVATE 

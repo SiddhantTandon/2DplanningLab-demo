@@ -4,14 +4,15 @@
 // This will be basic search
 class Search{
     protected:
-        // something
         Node start;
         Node goal;
+        MapGraph* map;
     public:
         Search(Node start, Node goal);
         ~Search();
-        std::vector<Node> getNeighbors();
-        Node getGoal();
+        void setMapforSearch(MapGraph* map);
+        std::vector<Node> getNeighbors(Node current);
+        Node showGoal();
         bool checkGoal(Node input);
         void setGoal(Node newgoal);
         void setStart(Node newstart);
