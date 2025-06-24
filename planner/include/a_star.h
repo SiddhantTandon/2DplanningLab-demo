@@ -10,6 +10,7 @@ so technically our search space will be infite!
 
 struct PriorityNode{
     Node expandedNode;
+    Node parent;
     float cost;
 };
 
