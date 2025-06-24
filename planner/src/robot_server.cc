@@ -52,7 +52,13 @@ public:
             mock_agent.addGoal(goal);
 
             mock_agent.makePath();
-            
+            //FIXME: Delete Start
+            std::vector<Node> ego_positions = mock_agent.getPath();
+            for (auto n: ego_positions)
+            {
+                spdlog::info("Sending position: ({},{})", n.row, n.col);
+            }
+            //FIXME: Delete end
             // message to send
             AgentMessage msg;
 
@@ -92,6 +98,8 @@ public:
                 {
 
                     mock_agent.updatePosition(n);
+
+                    spdlog::info("Sending position: ({},{})", n.row, n.col);
 
                     AgentMessage msg;
 

@@ -16,7 +16,7 @@ void AStar::planTrajectory(){
     startNode.expandedNode = this->start;
     startNode.cost = 0; // starting position
     this->expanded.push(startNode);
-    this->visited.push_back(this->start);
+    this->visited.push_back(startNode);
     spdlog::info("Starting loop for expanded nodes!");
     // start the while loop
     while (!this->expanded.empty())
@@ -29,10 +29,10 @@ void AStar::planTrajectory(){
         // check if it is the goal -> break
         Node current_node = popped_node.expandedNode;
         this->travel_cost += this->move_cost;
-        if (current_node.row == this->goal.row && current_node.col == this->goal.col)
+        if (current_node == goal)
         {
             spdlog::info("Found goal!");
-            this->visited.push_back(current_node);
+            this->visited.push_back(popped_node);
             break;
         }
         // get its neighbors
@@ -42,14 +42,14 @@ void AStar::planTrajectory(){
         {
             PriorityNode priority_n = this->getCostforNode(n);
             // add the neighbors to expanded queue
-            if (std::find(visited.begin(), visited.end(), priority_n.expandedNode) != visited.end()) {
+            if (std::find(visited.begin(), visited.end(), priority_n) != visited.end()) {
                 spdlog::info("Skipping already visited!");
             } else {
                 this->expanded.push(priority_n);
             }
         }
         // add the node to visited queue
-        this->visited.push_back(current_node);
+        this->visited.push_back(popped_node);
     }
 }
 
@@ -57,6 +57,41 @@ float AStar::getTravelCost(){
     return this->travel_cost;
 }
 
-std::vector<Node> AStar::getVisitedNodesList(){
+std::vector<PriorityNode> AStar::getVisitedNodesList(){
     return this->visited;
+}
+
+void AStar::travelPath(){
+    spdlog::info("Constructing path through backtracking.");
+    if(goal.row == this->visited.back().expandedNode.row 
+    && goal.col == this->visited.back().expandedNode.col){
+        // characterize it
+        Node parent = this->visited.back().parent;
+        this->travel_path.push_front(this->goal);
+        for (int i = (int)visited.size() - 1; i >= 0; --i){
+            if (visited[i].parent._is_empty())
+            {
+                if (visited[i].expandedNode == this->start){
+                    this->travel_path.push_front(visited[i].expandedNode);
+                    spdlog::info("Path construction done!");
+                    break;
+                }
+                else{
+                    spdlog::error("Something is wrong, path construction has a node with empty parent that is not start!");
+                }
+            }
+            if (visited[i].expandedNode == parent)
+            {
+                this->travel_path.push_front(visited[i].expandedNode);
+                parent = visited[i].parent;
+            }
+        }
+    }
+    else{
+        spdlog::error("Goal is not the same as visited path!");
+    }
+}
+
+std::deque<Node> AStar::getTravelPath(){
+    return this->travel_path;
 }
