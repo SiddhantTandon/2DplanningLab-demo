@@ -41,6 +41,7 @@ void AStar::planTrajectory(){
         for (auto n: neighbors)
         {
             PriorityNode priority_n = this->getCostforNode(n);
+            priority_n.parent = current_node; // adding parent is important for extraction!
             // add the neighbors to expanded queue
             if (std::find(visited.begin(), visited.end(), priority_n) != visited.end()) {
                 spdlog::info("Skipping already visited!");
@@ -63,16 +64,16 @@ std::vector<PriorityNode> AStar::getVisitedNodesList(){
 
 void AStar::travelPath(){
     spdlog::info("Constructing path through backtracking.");
-    if(goal.row == this->visited.back().expandedNode.row 
-    && goal.col == this->visited.back().expandedNode.col){
+    if(this->goal == this->visited.back().expandedNode){
         // characterize it
         Node parent = this->visited.back().parent;
+        spdlog::info("Parent of back node: ({},{})", parent.row, parent.col);
         this->travel_path.push_front(this->goal);
-        for (int i = (int)visited.size() - 1; i >= 0; --i){
-            if (visited[i].parent._is_empty())
+        for (int i = (int)this->visited.size() - 1; i >= 0; i--){
+            if (this->visited[i].parent._is_empty())
             {
-                if (visited[i].expandedNode == this->start){
-                    this->travel_path.push_front(visited[i].expandedNode);
+                if (this->visited[i].expandedNode == this->start){
+                    this->travel_path.push_front(this->visited[i].expandedNode);
                     spdlog::info("Path construction done!");
                     break;
                 }
@@ -80,10 +81,10 @@ void AStar::travelPath(){
                     spdlog::error("Something is wrong, path construction has a node with empty parent that is not start!");
                 }
             }
-            if (visited[i].expandedNode == parent)
+            if (this->visited[i].expandedNode == parent)
             {
-                this->travel_path.push_front(visited[i].expandedNode);
-                parent = visited[i].parent;
+                this->travel_path.push_front(this->visited[i].expandedNode);
+                parent = this->visited[i].parent;
             }
         }
     }

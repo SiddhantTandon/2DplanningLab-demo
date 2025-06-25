@@ -85,6 +85,7 @@ void Ego::makePath(){
         AStar a_star_planner(start, goal, this->map);
         spdlog::info("Starting A* to create a path");
         a_star_planner.planTrajectory();
+        a_star_planner.travelPath();
         std::deque<Node> returned_list = a_star_planner.getTravelPath();
         while(!returned_list.empty())
         {
