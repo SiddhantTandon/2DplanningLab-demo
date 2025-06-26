@@ -125,7 +125,7 @@ class SimulationPlatformViz:
                         if agents.agent_id == "1":
                             rec_position = agents.position
                             print(f"the positions are {rec_position.row} and {rec_position.col}")
-                            robot.updatePosition(pos_x + (rec_position.row * 32), pos_y + (rec_position.col))
+                            robot.updatePosition(rec_position.col * 32, rec_position.row*32)
 
                     pygame.display.update()
 
