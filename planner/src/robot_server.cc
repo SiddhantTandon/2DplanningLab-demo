@@ -92,7 +92,7 @@ public:
                 // int rand_col = choices[dist(gen)];
                 // Node new_pos{rand_row, rand_col};
 
-                std::vector<Node> ego_positions = mock_agent.getPath();
+                // std::vector<Node> ego_positions = mock_agent.getPath();
                 
                 for (Node n: ego_positions)
                 {
@@ -141,3 +141,42 @@ int main() {
     client.ShareState();
     return 0;
 }
+
+/*
+FIXME: Do this below instead of what is above ^
+
+// TODO: For A* we need to ensure that the message back and forth can be used for 
+// future versions of A* otherwise this will be too much of work
+
+while (true) {
+
+    // Send the message
+
+    //TODO: pop the position and send it. 
+
+    if (!stream->Write(request)) {
+        std::cerr << "Write failed. Server may have closed the stream." << std::endl;
+        break;
+    }
+
+    std::this_thread::sleep_for(std::chrono::seconds(1));  // Optional pacing
+
+    // Wait for response
+    if (!stream->Read(&response)) {
+        std::cout << "Server closed stream. Ending client." << std::endl;
+        break;
+    }
+    
+    //TODO: For future A* versions - take the map input
+    // adjust the process, and the position queue with new updates.
+    // (ensure of committed path, choose the next node  from front of queue)
+}
+
+stream->WritesDone();
+
+grpc::Status status = stream->Finish();
+if (!status.ok()) {
+    std::cerr << "RPC failed: " << status.error_message() << std::endl;
+}
+
+*/
