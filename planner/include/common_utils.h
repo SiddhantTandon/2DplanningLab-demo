@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <queue>
+#include <deque>
 #include <algorithm>
 #include <iostream>
 #include <set>
@@ -12,11 +13,15 @@
 #include <spdlog/spdlog.h>
 
 struct Node{
-    int row;
-    int col;
+    int row = -1;
+    int col = -1;
     std::string map_value; // this will also be used for "type" of agents/objects
     bool operator==(const Node& other) const {
         return row == other.row && col == other.col;
+    }
+    // this is to help with path loop
+    bool _is_empty(){
+        return row == -1 && col == -1;
     }
 };
 

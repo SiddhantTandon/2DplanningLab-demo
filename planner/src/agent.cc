@@ -85,10 +85,13 @@ void Ego::makePath(){
         AStar a_star_planner(start, goal, this->map);
         spdlog::info("Starting A* to create a path");
         a_star_planner.planTrajectory();
-        std::vector<Node> returned_list = a_star_planner.getVisitedNodesList();
-        for (int j = 0; j < returned_list.size(); j++)
+        a_star_planner.travelPath();
+        std::deque<Node> returned_list = a_star_planner.getTravelPath();
+        while(!returned_list.empty())
         {
-            this->position_list.push_back(returned_list[j]);
+            spdlog::info("In the front is: ({},{})", returned_list.front().row, returned_list.front().col);
+            this->position_list.push_back(returned_list.front());
+            returned_list.pop_front();
         }
 
         Node start = goal;
