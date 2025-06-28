@@ -23,15 +23,6 @@ class BasicObject{
         std::vector<Node> getPath();
 };
 
-//TODO: adding definitions for dynamic later
-class DynamicObstacle: public BasicObject{
-    private:
-        std::string behavior;
-    public:
-        DynamicObstacle();
-        ~DynamicObstacle();
-        std::string get_obstacleType();
-};
 
 class Ego: public BasicObject{
     private:
@@ -52,4 +43,6 @@ class Ego: public BasicObject{
         void updatePosition(Node update);
         void saveToMovementTrace(std::string move);
         void makePath();
+        void updateForNextMessage();
+        bool remainingPathGreaterThanZero();
 };

@@ -27,11 +27,6 @@ public:
         : stub_(ShareStateService::NewStub(channel)) {}
 
     void ShareState() {
-        //random stuff for mock
-        std::vector<int> choices{-1,0,1};
-        std::random_device rd;  // seed source
-        std::mt19937 gen(rd()); // random number generator
-        std::uniform_int_distribution<> dist(0, choices.size() - 1);
 
         // service 
         ClientContext context;
@@ -42,7 +37,6 @@ public:
         MapGraph map(filename);
         if (map.setGrid())
         {
-
             Ego mock_agent("1", "ego");
 
             mock_agent.setMap(&map);
@@ -52,78 +46,73 @@ public:
             mock_agent.addGoal(goal);
 
             mock_agent.makePath();
-            //FIXME: Delete Start
-            std::vector<Node> ego_positions = mock_agent.getPath();
-            for (auto n: ego_positions)
-            {
-                spdlog::info("Sending position: ({},{})", n.row, n.col);
-            }
-            //FIXME: Delete end
-            // message to send
-            AgentMessage msg;
+            bool keep_run = true;
+            while (keep_run){
 
-            // Set timestamp
-            google::protobuf::Timestamp* ts = msg.mutable_timestamp();
-            std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(
-            std::chrono::system_clock::now().time_since_epoch());
-            ts->set_seconds(sec.count() + 1);  // or use actual time
+                /*  THIS CAN BE THE AGENT LOOP FOR SENDING ALL AGENT MESSAGES  */
+                // message to send
+                AgentMessage msg;
 
-            // Add agent
-            AgentState* agent = msg.add_agents();
-            agent->set_agent_id(mock_agent.getID());
+                // Set timestamp
+                google::protobuf::Timestamp* ts = msg.mutable_timestamp();
+                std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(
+                std::chrono::system_clock::now().time_since_epoch());
+                ts->set_seconds(sec.count() + 1);  //TODO: or use actual time
 
-            // Set position
-            Position* pos = agent->mutable_position();
-            Node mock_agent_pos = mock_agent.getPosition();
-            pos->set_row(mock_agent_pos.row);
-            pos->set_col(mock_agent_pos.col);
+                // Add agent
+                AgentState* agent = msg.add_agents();
+                agent->set_agent_id(mock_agent.getID());
 
-            stream->Write(msg);
+                // Set position
+                Position* pos = agent->mutable_position();
+                Node mock_agent_pos = mock_agent.getPosition(); // TODO: need to pop this 
+                pos->set_row(mock_agent_pos.row);
+                pos->set_col(mock_agent_pos.col);
 
-            MapMessage response;
-            while (stream->Read(&response)) {
-                std::cout << "Received MapMessage with timestamp: "
-                        << response.timestamp().seconds() << std::endl;
-                std::cout << "Received position row: " << response.map_states().at(0).cell_state().position().row() << std::endl;
-                std::cout << "Received position col: " << response.map_states().at(0).cell_state().position().col() << std::endl;
-                std::cout << "Received value: " << response.map_states().at(0).cell_state().value() << std::endl;
+                if (!stream->Write(msg)) {
+                    std::cerr << "Write failed. Server may have closed the stream." << std::endl;
+                    break;
+                }
 
-                // int rand_row = choices[dist(gen)];
-                // int rand_col = choices[dist(gen)];
-                // Node new_pos{rand_row, rand_col};
+                if(mock_agent.remainingPathGreaterThanZero()){
+                    mock_agent.updateForNextMessage();
+                }
+                else{
+                    spdlog::info("Agent has reached its goal!! 🚀");
+                    keep_run = false;
+                    break;
+                }
 
-                // std::vector<Node> ego_positions = mock_agent.getPath();
-                
-                for (Node n: ego_positions)
-                {
+                /*  THEN END THE LOOP HERE AND WAIT FOR THE RESPONSE   */
+                std::this_thread::sleep_for(std::chrono::seconds(1));
 
-                    mock_agent.updatePosition(n);
+                MapMessage response; //TODO: make sure we are only giving back one response per timestamp
+                if (!stream->Read(&response)) {
+                    std::cout << "Server closed stream. Ending client." << std::endl;
+                    break;
+                }
+                else{
+                    std::cout << "Received MapMessage with timestamp: "
+                            << response.timestamp().seconds() << std::endl;
+                    std::cout << "Received position row: " << response.map_states().at(0).cell_state().position().row() << std::endl;
+                    std::cout << "Received position col: " << response.map_states().at(0).cell_state().position().col() << std::endl;
+                    std::cout << "Received value: " << response.map_states().at(0).cell_state().value() << std::endl;
 
-                    spdlog::info("Sending position: ({},{})", n.row, n.col);
+                    //TODO: do something wit this message
+                    // Ideally use this to figure out when we need to invoke the A* again
 
-                    AgentMessage msg;
-
-                    // Set timestamp
-                    google::protobuf::Timestamp* ts = msg.mutable_timestamp();
-                    std::chrono::seconds sec = std::chrono::duration_cast<std::chrono::seconds>(
-                    std::chrono::system_clock::now().time_since_epoch());
-                    ts->set_seconds(sec.count() + 1);  // or use actual time
-
-                    // Add agent
-                    AgentState* agent = msg.add_agents();
-                    agent->set_agent_id(mock_agent.getID());
-
-                    // Set position
-                    Position* pos = agent->mutable_position();
-                    Node mock_agent_pos = mock_agent.getPosition();
-                    pos->set_row(mock_agent_pos.row);
-                    pos->set_col(mock_agent_pos.col);
-
-                    stream->Write(msg);
-                    std::this_thread::sleep_for(std::chrono::seconds(1));
                 }
             }
+            spdlog::info("Break is applied, ending client");
             stream->WritesDone();
+            /* REQUIRED TO END CLIENT WHEN BIDRECTIONAL STREAM */
+            MapMessage response;
+            while(!stream->Read(&response)) {
+                std::cout << "Server closed stream. Ending client." << std::endl;
+                break;
+            }
+
+            /* NOW ACTUALLY ENDING CLIENT */
             Status status = stream->Finish();
             if (!status.ok()) {
                 std::cerr << "ShareState rpc failed: " << status.error_message() << std::endl;

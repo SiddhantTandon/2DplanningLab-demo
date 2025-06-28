@@ -99,3 +99,11 @@ void Ego::makePath(){
     
 }
 
+void Ego::updateForNextMessage(){
+    this->position_list.erase(this->position_list.begin()); // remove the element at first
+    this->position = this->position_list.front(); // the next element is now first
+}
+
+bool Ego::remainingPathGreaterThanZero(){
+    return this->position_list.size() != 0;
+}
