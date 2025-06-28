@@ -27,8 +27,9 @@ struct PriorityComparator{
 
 class AStar: public Search{
     protected:
-        std::priority_queue<PriorityNode, std::vector<PriorityNode>, PriorityComparator> expanded;
-        std::vector<PriorityNode> visited;
+        std::priority_queue<PriorityNode, std::vector<PriorityNode>, PriorityComparator> pq;
+        std::vector<PriorityNode> expanded;
+        std::vector<Node> visited;
         const float move_cost = 1; // we are only moving one grid at a time even waiting has a cost
         float travel_cost = 0; // total cost till now for visited nodes
         std::deque<Node> travel_path;
@@ -39,7 +40,8 @@ class AStar: public Search{
         void planTrajectory(); // in TVA you can call this for each time?
         PriorityNode getCostforNode(Node expandedNode);
         float getTravelCost();
-        std::vector<PriorityNode> getVisitedNodesList();
+        std::vector<PriorityNode> getExpandedNodesList();
         void travelPath();
         std::deque<Node> getTravelPath();
+        bool reachableGoal();
 };

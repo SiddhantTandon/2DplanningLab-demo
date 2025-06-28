@@ -55,6 +55,7 @@ def main():
         # Ensure cleanup happens no matter how the program exits
         if not args.just_map:
             service.stop_server()
+            time.sleep(0.5)
         on_exit()
 
 if __name__ == "__main__":
