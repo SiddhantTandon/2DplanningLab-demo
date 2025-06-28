@@ -78,7 +78,7 @@ public:
                     mock_agent.updateForNextMessage();
                 }
                 else{
-                    spdlog::info("Agent has reached its goal!! 🚀");
+                    spdlog::info("Agent has reached its goal!! ✅");
                     keep_run = false;
                     break;
                 }
