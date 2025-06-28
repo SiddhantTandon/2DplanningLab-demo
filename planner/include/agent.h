@@ -32,6 +32,7 @@ class Ego: public BasicObject{
         std::vector<BasicObject> objects;
         Node previous_position;
         std::vector<std::string> movementTrace; //useful for moving and xAi approaches?
+        bool goalReachable;
     public:
         Ego(std::string id, std::string agent_type) : BasicObject(id, agent_type){
             spdlog::info("Loaded agent successfully!");
@@ -45,4 +46,5 @@ class Ego: public BasicObject{
         void makePath();
         void updateForNextMessage();
         bool remainingPathGreaterThanZero();
+        bool goalReached();
 };

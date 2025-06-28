@@ -86,12 +86,19 @@ void Ego::makePath(){
         spdlog::info("Starting A* to create a path");
         a_star_planner.planTrajectory();
         a_star_planner.travelPath();
-        std::deque<Node> returned_list = a_star_planner.getTravelPath();
-        while(!returned_list.empty())
-        {
-            spdlog::info("In the front is: ({},{})", returned_list.front().row, returned_list.front().col);
-            this->position_list.push_back(returned_list.front());
-            returned_list.pop_front();
+        this->goalReachable = a_star_planner.reachableGoal();
+        if(goalReachable){
+            std::deque<Node> returned_list = a_star_planner.getTravelPath();
+            while(!returned_list.empty())
+            {
+                spdlog::info("In the front is: ({},{})", returned_list.front().row, returned_list.front().col);
+                this->position_list.push_back(returned_list.front());
+                returned_list.pop_front();
+            }
+        }
+        else{
+            this->position_list.clear();
+            break;
         }
 
         Node start = goal;
@@ -106,4 +113,8 @@ void Ego::updateForNextMessage(){
 
 bool Ego::remainingPathGreaterThanZero(){
     return this->position_list.size() != 0;
+}
+
+bool Ego::goalReached(){
+    return this->goalReachable;
 }

@@ -41,16 +41,27 @@ public:
 
             mock_agent.setMap(&map);
 
-            mock_agent.setPosition(4, 12);
-            Node goal{4, 18};
+            mock_agent.setPosition(4, 1);
+            Node goal{14, 32};
             mock_agent.addGoal(goal);
 
             mock_agent.makePath();
-            bool keep_run = true;
-            while (keep_run){
+
+            while (true){
 
                 /*  THIS CAN BE THE AGENT LOOP FOR SENDING ALL AGENT MESSAGES  */
                 // message to send
+                if(mock_agent.remainingPathGreaterThanZero() && mock_agent.goalReached()){
+                    mock_agent.updateForNextMessage();
+                }
+                else if(!mock_agent.remainingPathGreaterThanZero() && mock_agent.goalReached()){
+                    spdlog::info("Agent has reached its goal!! ✅");
+                    break;
+                }
+                else{
+                    spdlog::info("Agent could not reach goal!! 😞");
+                    break;
+                }
                 AgentMessage msg;
 
                 // Set timestamp
@@ -74,15 +85,6 @@ public:
                     break;
                 }
 
-                if(mock_agent.remainingPathGreaterThanZero()){
-                    mock_agent.updateForNextMessage();
-                }
-                else{
-                    spdlog::info("Agent has reached its goal!! ✅");
-                    keep_run = false;
-                    break;
-                }
-
                 /*  THEN END THE LOOP HERE AND WAIT FOR THE RESPONSE   */
                 std::this_thread::sleep_for(std::chrono::seconds(1));
 
@@ -103,7 +105,6 @@ public:
 
                 }
             }
-            spdlog::info("Break is applied, ending client");
             stream->WritesDone();
             /* REQUIRED TO END CLIENT WHEN BIDRECTIONAL STREAM */
             MapMessage response;
