@@ -38,7 +38,7 @@ class Ego: public BasicObject{
             spdlog::info("Loaded agent successfully!");
         };
         ~Ego(){spdlog::debug("Destroyed Ego instance");};
-        std::vector<Node> showGoals();
+        void showGoals();
         void addGoal(Node sub_goal);
         std::vector<BasicObject> getObjects();
         void updatePosition(Node update);

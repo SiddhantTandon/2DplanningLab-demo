@@ -42,8 +42,11 @@ public:
             mock_agent.setMap(&map);
 
             mock_agent.setPosition(4, 1);
-            Node goal{14, 32};
+            Node goal{14, 28};
             mock_agent.addGoal(goal);
+            Node goal2{1, 29};
+            mock_agent.addGoal(goal2);
+            mock_agent.showGoals();
 
             mock_agent.makePath();
 
