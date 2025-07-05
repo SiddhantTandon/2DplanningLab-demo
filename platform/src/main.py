@@ -60,3 +60,9 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+'''
+For this file - we can send map message protos, with some type that is 
+unique for loading. Once the loading (setting up maps, potential fields etc)
+is finished then we will commence the main sim loop for protobuf sharing .
+'''

@@ -57,8 +57,11 @@ void AStar::planTrajectory(){
         this->expanded.push_back(popped_node);
         spdlog::info("Queue size: {}", this->pq.size());
     }
-    spdlog::info("No Goal Found!");
-    this->reachedGoal = false;
+    if(this->pq.empty() && !this->reachedGoal){
+        spdlog::info("No Goal Found!");
+        this->reachedGoal = false;
+    }
+
 }
 
 float AStar::getTravelCost(){

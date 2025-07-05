@@ -40,8 +40,11 @@ std::vector<Node> BasicObject::getPath(){
     return this->position_list;
 }
 
-std::vector<Node> Ego::showGoals(){
-    return this->all_goals;
+void Ego::showGoals(){
+    spdlog::info("Printing goals for Robot ..");
+    for(auto g: this->all_goals){
+        spdlog::info("Goal: ({},{})", g.row, g.col);
+    }
 }
 
 std::vector<BasicObject> Ego::getObjects(){
@@ -76,14 +79,18 @@ void Ego::makePath(){
         this->all_goals_copy.push(this->all_goals[i]);
     }
 
+    this->current_goal = all_goals[0];
+    spdlog::info("Current Goal is: ({},{})", this->current_goal.row, this->current_goal.col);
+
     Node start = this->position;
 
     while (!this->all_goals_copy.empty())
     {
         Node goal = this->all_goals_copy.front();
         this->all_goals_copy.pop();
+        spdlog::info("Start Pos: ({},{})", start.row, start.col);
         AStar a_star_planner(start, goal, this->map);
-        spdlog::info("Starting A* to create a path");
+        spdlog::info("Starting A* to create a path for goal ({},{})", goal.row, goal.col);
         a_star_planner.planTrajectory();
         a_star_planner.travelPath();
         this->goalReachable = a_star_planner.reachableGoal();
@@ -101,7 +108,8 @@ void Ego::makePath(){
             break;
         }
 
-        Node start = goal;
+        start = goal;
+        spdlog::info("Start Pos: ({},{})", start.row, start.col);
     }
     
 }
@@ -109,6 +117,13 @@ void Ego::makePath(){
 void Ego::updateForNextMessage(){
     this->position_list.erase(this->position_list.begin()); // remove the element at first
     this->position = this->position_list.front(); // the next element is now first
+    auto goal_it = std::find(this->all_goals.begin(), this->all_goals.end(), this->position);
+    if (goal_it != this->all_goals.end() && std::next(goal_it) != this->all_goals.end()) {
+        if(std::next(goal_it) != this->all_goals.end()){
+            this->current_goal = this->all_goals[std::distance(this->all_goals.begin(), std::next(goal_it))];
+            spdlog::info("Current Goal is: ({},{})", this->current_goal.row, this->current_goal.col);
+        }
+    }
 }
 
 bool Ego::remainingPathGreaterThanZero(){

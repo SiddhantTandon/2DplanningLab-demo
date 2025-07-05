@@ -37,3 +37,15 @@ def is_this_topleft_point(row, col, grid, obj_str):
         return False
     
     return True
+
+def get_all_empty_spaces_in_map(grid):
+    empty_space = set()
+    for j in range(len(grid[0])):
+        for i in range(len(grid)):
+            if grid[i][j] == "x":
+                empty_space.add((i,j))
+    return empty_space
+
+
+def get_grid_ids(pixel_x, pixel_y):
+    return (pixel_x/32, pixel_y/32)

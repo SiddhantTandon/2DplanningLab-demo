@@ -7,7 +7,7 @@ class Search{
         Node start;
         Node goal;
         MapGraph* map;
-        bool reachedGoal;
+        bool reachedGoal = false;
     public:
         Search(Node start, Node goal, MapGraph* map);
         ~Search();

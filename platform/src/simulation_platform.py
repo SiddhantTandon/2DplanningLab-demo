@@ -5,8 +5,20 @@ import utils.helpers as utils
 import utils.map_message_helpers as map_msg_utils
 from dataclasses import dataclass
 import time
+import logging
 # from google.protobuf.timestamp_pb2 import Timestamp
 # from network import state_message_pb2
+
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(levelname)s - %(message)s',
+    handlers=[
+        logging.StreamHandler()
+    ]
+)
+
+logger = logging.getLogger(__name__)
+
 
 @dataclass
 class Tile:
@@ -45,6 +57,10 @@ class SimulationPlatformViz:
 
         # load map
         map_grid = utils.load_map_file(str(self._args.map).strip())
+
+        logger.info(f"Size of the map row: {len(map_grid)}")
+        logger.info(f"Size of the map col: {len(map_grid[0])}")
+        
         
 
         #initialize pygame
